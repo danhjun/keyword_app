@@ -177,7 +177,7 @@ dates_trends = data.columns[display_dates_trends]
 # Plot trends for high priority countries
 for country in high_priority_countries:
     data_numeric_trends = data.loc[country, dates_trends].apply(pd.to_numeric, errors='coerce')
-    ax_trends.plot(dates_trends, data_numeric_trends, marker='o', linestyle='-', label=country, alpha=0.25)
+    ax_trends.plot(dates_trends, data_numeric_trends, marker='o', linestyle='-', label=country, alpha=0.5)
 
 ax_trends.set_xlabel('Date')
 ax_trends.set_ylabel('Ranking')
