@@ -6,7 +6,7 @@ import numpy as np
 # Load CSV data
 @st.cache
 def load_data():
-    df = pd.read_csv("data/5-25_gym_hardstyle.csv", index_col=0)
+    df = pd.read_csv("data/5-26 - gym hardstyle.csv", index_col=0)
     return df
 
 # Load data
