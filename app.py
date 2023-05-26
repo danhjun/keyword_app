@@ -86,7 +86,7 @@ countries_rank_same = end_ranking[end_ranking == start_ranking]
 
 # Display changes for high priority countries
 st.subheader(f"Changes in High Priority Countries from {start_date} to {end_date}")
-high_priority_countries = ["United States of America", "Germany", "Brazil", "Japan", "United Kingdom", "Spain", "France", "Italy", "Australia", "Canada", "Sweden"]
+high_priority_countries = ["United States of America", "Germany", "Brazil", "Japan", "United Kingdom", "Spain", "France", "Italy", "Australia", "Canada", "Sweden", "Mexico", "Argentina", "India"]
 change_data = {
     'Country': [],
     'Change Type': [],
