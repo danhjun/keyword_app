@@ -2,19 +2,29 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
-# Load CSV data
+
+# Function to load CSV data
 @st.cache
-def load_data():
-    df = pd.read_csv("data/5-26 - gym hardstyle.csv", index_col=0)
+def load_data(file_path):
+    df = pd.read_csv(file_path, index_col=0)
     return df
 
-# Load data
-data = load_data()
+
+# Get a list of CSV files in the data directory
+data_dir = "data"
+csv_files = [f for f in os.listdir(data_dir) if f.endswith(".csv")]
+
+# Select data file
+selected_file = st.selectbox("Select a data file", csv_files, key="data_file_select")
+
+# Load selected data file
+data = load_data(os.path.join(data_dir, selected_file))
 
 # Select country
 countries = data.index.tolist()
-selected_country = st.selectbox("Select a country", countries)
+selected_country = st.selectbox("Select a country", countries, key="country_select")
 
 # Remove unexpected columns
 data = data.loc[:, ~data.columns.str.startswith('Unnamed')]
@@ -154,3 +164,55 @@ with col3:
 
     rank_same_df = pd.DataFrame(rank_same_data)
     st.dataframe(rank_same_df)
+
+# Plot trends for high priority countries
+fig_trends, ax_trends = plt.subplots(figsize=(28, 14))
+
+# Select a subset of dates to display for trends
+num_dates_trends = data.shape[1]  # Total number of dates
+num_display_dates_trends = 130  # Number of dates to display (increase this value for more dates)
+display_dates_trends = np.linspace(0, num_dates_trends - 1, num=num_display_dates_trends, dtype=int)
+dates_trends = data.columns[display_dates_trends]
+
+# Plot trends for high priority countries
+for country in high_priority_countries:
+    data_numeric_trends = data.loc[country, dates_trends].apply(pd.to_numeric, errors='coerce')
+    ax_trends.plot(dates_trends, data_numeric_trends, marker='o', linestyle='-', label=country, alpha=0.25)
+
+ax_trends.set_xlabel('Date')
+ax_trends.set_ylabel('Ranking')
+ax_trends.set_title('Trends for High Priority Countries', loc='left')
+
+# Reduce number of visible ticks on the x-axis
+num_ticks_trends = num_display_dates_trends
+step_size_trends = len(dates_trends) // (num_ticks_trends - 1)
+visible_dates_trends = dates_trends[::step_size_trends]
+ax_trends.set_xticks(visible_dates_trends)
+ax_trends.tick_params(axis='x', labelsize=8)
+
+# Set y-axis limits with padding
+padding_trends = 5  # Adjust the padding as desired
+min_value_trends = 0
+max_value_trends = np.ceil(data_numeric_trends.max() / 10) * 10  # Round up the max value to the nearest multiple of 10
+ax_trends.set_ylim(min_value_trends, max_value_trends)
+
+# Set y-axis increment marks
+increment_marks_trends = np.arange(min_value_trends, max_value_trends + 1, 10)  # Adjust the increment as desired
+ax_trends.set_yticks(increment_marks_trends)
+
+# Set y-axis minor increment marks (increment by 1)
+increment_marks_minor_trends = np.arange(min_value_trends, max_value_trends + 1, 1)  # Adjust the minor increment as desired
+ax_trends.set_yticks(increment_marks_minor_trends, minor=True)
+ax_trends.yaxis.grid(True, which='minor', linestyle='--', alpha=0.5)  # Add gridlines for minor increment
+
+# Add grid lines
+ax_trends.grid(True, linestyle='--', alpha=0.5)
+
+# Rotate x-axis labels for better readability
+plt.xticks(rotation=45)
+
+# Add legend
+ax_trends.legend()
+
+# Display the trends plot using Streamlit
+st.pyplot(fig_trends)
