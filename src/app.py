@@ -6,7 +6,7 @@ import numpy as np
 # Load CSV data
 @st.cache
 def load_data():
-    df = pd.read_csv(r"/app/5-25_gym_hardstyle.csv", index_col=0)
+    df = pd.read_csv("../data/5-25_gym_hardstyle.csv", index_col=0)
     return df
 
 # Load data
@@ -25,7 +25,7 @@ fig, ax = plt.subplots(figsize=(28, 14))  # Adjust the figure size as desired
 # Select a subset of dates to display
 num_dates = data.shape[1]  # Total number of dates
 num_display_dates = 130  # Number of dates to display (increase this value for more dates)
-display_dates = np.linspace(0, num_dates - 1, num=num_display_dates, dtype=int)  # Select evenly spaced dates
+display_dates = np.linspace(0, num_dates - 1, num=num_display_dates, dtype=int)
 dates = data.columns[display_dates]
 
 # Convert values to numeric
